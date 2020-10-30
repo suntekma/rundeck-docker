@@ -3,7 +3,7 @@
 
 FROM debian:stretch
 
-MAINTAINER Jordan Jethwa
+MAINTAINER Suntek.Q.Ma@newegg.com
 
 ENV SERVER_URL=https://localhost:4443 \
     RUNDECK_STORAGE_PROVIDER=file \
@@ -20,25 +20,26 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -qq update && \
     apt-get -qqy install -t stretch-backports --no-install-recommends bash openjdk-8-jre-headless ca-certificates-java supervisor procps sudo ca-certificates openssh-client mysql-server mysql-client postgresql-9.6 postgresql-client-9.6 pwgen curl git uuid-runtime parallel jq && \
     cd /tmp/ && \
-    curl -Lo /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.2.2.20200204-1_all.deb && \
-    echo '7e1aaf32390cf8c8e1be1d6cce3cea11b0eb433835ec059a513917004d2d2fe2  rundeck.deb' > /tmp/rundeck.sig && \
+    curl -Lo /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.3.5.20201019-1_all.deb && \
+    echo 'b627d6e5d3cdaaa6d0a6e67d995daf92739a1dc1472a8efdc1ce1b46398f5d0c  rundeck.deb' > /tmp/rundeck.sig && \
     shasum -a256 -c /tmp/rundeck.sig && \
-    curl -Lo /tmp/rundeck-cli.deb https://dl.bintray.com/rundeck/rundeck-deb/rundeck-cli_1.1.7-1_all.deb && \
-    echo 'd8f39c3cebcf3ed16d138cbd18e014303fef27234c32d276a1cf1462f7c250da  rundeck-cli.deb' > /tmp/rundeck-cli.sig && \
+    curl -Lo /tmp/rundeck-cli.deb https://dl.bintray.com/rundeck/rundeck-deb/:rundeck-cli_1.3.4-1_all.deb && \
+    echo 'c861a8ad7e8629cb9b22674a6d24bfe8d796f0e8ae84f47faba07742fa942302  rundeck-cli.deb' > /tmp/rundeck-cli.sig && \
     shasum -a256 -c /tmp/rundeck-cli.sig && \
     cd - && \
     dpkg -i /tmp/rundeck*.deb && rm /tmp/rundeck*.deb && \
-    mkdir -p /tmp/rundeck && \
     chown rundeck:rundeck /tmp/rundeck && \
     mkdir -p /var/lib/rundeck/.ssh && \
     chown rundeck:rundeck /var/lib/rundeck/.ssh && \
     sed -i "s/export RDECK_JVM=\"/export RDECK_JVM=\"\${RDECK_JVM} /" /etc/rundeck/profile && \
-    curl -Lo /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.11.jar https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.11.dev/rundeck-slack-incoming-webhook-plugin-0.11.jar && \
-        curl -Lo /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.6.jar https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.6.dev/rundeck-slack-incoming-webhook-plugin-0.6.jar && \
+    curl -Lo /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.6.jar https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.6.dev/rundeck-slack-incoming-webhook-plugin-0.6.jar && \
     curl -Lo /var/lib/rundeck/libext/rundeck-httppost-plugin-0.1-1.jar https://repo1.maven.org/maven2/be/fluid-it/tools/rundeck/plugins/rundeck-httppost-plugin/0.1-1/rundeck-httppost-plugin-0.1-1.jar && \
     curl -Lo /var/lib/rundeck/libext/http-step-1.0.12.jar https://github.com/rundeck-plugins/http-step/releases/download/1.0.12/http-step-1.0.12.jar && \
     curl -Lo /var/lib/rundeck/libext/rundeck-salt-plugin-0.4.jar https://github.com/rundeck-plugins/salt-step/releases/download/0.4/rundeck-salt-plugin-0.4.jar && \
-    echo 'efce8fa7891371bb8540b55d7eef645741566d411b3dbed43e9b7fe2e4d099a0  rundeck-slack-incoming-webhook-plugin-0.11.jar' > /tmp/rundeck-slack-plugin.sig && \
+    curl -Lo /var/lib/rundeck/libext/rundeck-winrm-plugin-1.3.8.jar https://github.com/rundeck-plugins/rundeck-winrm-plugin/releases/download/v1.3.8/rundeck-winrm-plugin-1.3.8.jar && \
+    curl -Lo /var/lib/rundeck/libext/rundeck-json-plugin-1.1.jar  https://github.com/rundeck-plugins/rundeck-json-plugin/releases/download/v1.1/rundeck-json-plugin-1.1.jar && \
+
+    echo 'd23b31ec4791dff1a7051f1f012725f20a1e3e9f85f64a874115e46df77e00b5  rundeck-slack-incoming-webhook-plugin-0.6.jar' > /tmp/rundeck-slack-plugin.sig && \
     cd /var/lib/rundeck/libext/ && \
     shasum -a256 -c /tmp/rundeck-slack-plugin.sig && \
     cd - && \
